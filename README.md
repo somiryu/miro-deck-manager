@@ -3,6 +3,10 @@
 This is a Miro extension to use shapes, sticky notes and images as playing cards or dice.
 Developed by Azahar Games, a board game publisher in Colombia. We use this extension to design and test board games in Miro.
 
+## Installation
+Use the following link to install the App:
+https://miro.com/app-install/?response_type=code&client_id=3458764611484031096&redirect_uri=%2Fapp-install%2Fconfirm%2F
+
 ### Functionality
 
 - Shuffle: select multiple elements or groups of elements at once and shuffle them.
