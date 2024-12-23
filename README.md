@@ -11,3 +11,8 @@ Developed by Azahar Games, a board game publisher in Colombia. We use this exten
 - Random Pick: Select multiple elements and click the bottom to pick one at random and send it to front.
 - Spread: select a min and max range and click the button to spread all elements randomly in the space.
 - Roll: Stack multiple shapes (not groups) and click this button to emulate the rolling of a dice: one element will get to be on top at random.
+
+
+### Azahar
+
+Visit us at www.azaharjuegos.com
