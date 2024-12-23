@@ -14,7 +14,6 @@ function shuffleArray(array) {
 }
 
 function getRandomNumber(min, max) {
-  console.log("min", min, "max", max)
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -91,7 +90,6 @@ async function flipAll(){
 const stack = async () => {
   const selected = await miro.board.getSelection()
   const elems = selected.filter(e => e.x)
-  console.log(elems)
   let minX, maxX, minY, maxY
   for(let elem of elems){
     if(!minX || elem.x < minX) minX = elem.x 
@@ -131,7 +129,6 @@ const flipSingleGroup = async (toInvert) => {
 const pickFromArr = async(arr ) => {
   const randomIndex = Math.floor(Math.random() * arr.length); // Generate random index
   const picked = arr[randomIndex]
-  console.log("PICKED", picked)
   await picked.bringToFront()
   await miro.board.deselect()
   await miro.board.select({id: picked.id})
