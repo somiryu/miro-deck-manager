@@ -1,52 +1,13 @@
 ## Deck Manager
 
-**&nbsp;ℹ&nbsp;Note**:
+This is a Miro extension to use shapes, sticky notes and images as playing cards or dice.
+Developed by Azahar Games, a board game publisher in Colombia. We use this extension to design and test board games in Miro.
 
-- We recommend a Chromium-based web browser for local development with HTTP. \
-  Safari enforces HTTPS; therefore, it doesn't allow localhost through HTTP.
-- For more information, visit our [developer documentation](https://developers.miro.com).
+### Functionality
 
-### How to start locally
-
-- Run `npm i` to install dependencies.
-- Run `npm start` to start developing. \
-  Your URL should be similar to this example:
- ```
- http://localhost:3000
- ```
-- Paste the URL under **App URL** in your
-  [app settings](https://developers.miro.com/docs/build-your-first-hello-world-app#step-3-configure-your-app-in-miro).
-- Open a board; you should see your app in the app toolbar or in the **Apps**
-  panel.
-
-### How to build the app
-
-- Run `npm run build`. \
-  This generates a static output inside [`dist/`](./dist), which you can host on a static hosting
-  service.
-
-### Folder structure
-
-<!-- The following tree structure is just an example -->
-
-```
-.
-├── src
-│  ├── assets
-│  │  └── style.css
-│  ├── app.jsx      // The code for the app lives here
-│  └── index.js    // The code for the app entry point lives here
-├── app.html       // The app itself. It's loaded on the board inside the 'appContainer'
-└── index.html     // The app entry point. This is what you specify in the 'App URL' box in the Miro app settings
-```
-
-### About the app
-
-This sample app provides you with boilerplate setup and configuration that you can further customize to build your own app.
-
-<!-- describe shortly the purpose of the sample app -->
-
-Built using [`create-miro-app`](https://www.npmjs.com/package/create-miro-app).
-
-This app uses [Vite](https://vitejs.dev/). \
-If you want to modify the `vite.config.js` configuration, see the [Vite documentation](https://vitejs.dev/guide/).
+- Shuffle: select multiple elements or groups of elements at once and shuffle them.
+- Flip: group to elements first. Then use this bottom so those elements are flipped, as if you were flipping a playing card.
+- Stack: Select multiple elements and click this buttom so all are centered on a single point, building a deck
+- Random Pick: Select multiple elements and click the bottom to pick one at random and send it to front.
+- Spread: select a min and max range and click the button to spread all elements randomly in the space.
+- Roll: Stack multiple shapes (not groups) and click this button to emulate the rolling of a dice: one element will get to be on top at random.
