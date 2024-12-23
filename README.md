@@ -4,8 +4,11 @@ This is a Miro extension to use shapes, sticky notes and images as playing cards
 Developed by Azahar Games, a board game publisher in Colombia. We use this extension to design and test board games in Miro.
 
 ## Installation
+
 Use the following link to install the App:
 https://miro.com/app-install/?response_type=code&client_id=3458764611484031096&redirect_uri=%2Fapp-install%2Fconfirm%2F
+
+The app is currently a Beta.
 
 ### Functionality
 
@@ -16,6 +19,9 @@ https://miro.com/app-install/?response_type=code&client_id=3458764611484031096&r
 - Spread: select a min and max range and click the button to spread all elements randomly in the space.
 - Roll: Stack multiple shapes (not groups) and click this button to emulate the rolling of a dice: one element will get to be on top at random.
 
+
+## Groups
+To build a "card" we recomend grouping only two elements, one for the cover of the card and one for the front face. If you can an element with multiple shapes grouped together, we recommend copying the elements as an image and then using the image version to crate the card. While some functionalities might work with grouped elements, we recommend making a copy of your work before testing the extension.
 
 ### Azahar
 
