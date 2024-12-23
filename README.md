@@ -23,6 +23,8 @@ The app is currently a Beta.
 ## Groups
 To build a "card" we recomend grouping only two elements, one for the cover of the card and one for the front face. If you can an element with multiple shapes grouped together, we recommend copying the elements as an image and then using the image version to crate the card. While some functionalities might work with grouped elements, we recommend making a copy of your work before testing the extension.
 
+Miro API doesn't allow to move or reorder "group" elements, making this a workaround to make it work.
+
 ### Azahar
 
 Visit us at www.azaharjuegos.com
