@@ -41,12 +41,32 @@ To avoid this, do not group deck of grouped cards or elements. Each card must be
 - Random Pick: Select multiple elements or cards and then pick one at random and send it to front. The selection will be auto-selected.
 - Spread: select a min and max range and click the button to spread all elements or cards randomly in the space. This function is incompatible with Layers.
 - Roll: Create a dice (see above) and click this button to emulate the rolling of a dice: one element will get to be on top at random.
+- Sync: See Data Management below
 
 
 ## Groups
 To build a "card" we recomend grouping only two elements, one for the cover of the card and one for the front face. If you need an element with multiple shapes grouped together, we recommend copying the elements as an image and then using the image version to create the card. While some functionalities might work with grouped elements, we recommend making a copy of your work before testing the extension.
 
 Miro API doesn't allow to move or reorder "group" elements, making this a workaround to make it work.
+
+# Data Management
+The app has a sync button that allows you to use the elements of a Miro Card (not a card as understood in this guide, but the actual widget call card by Miro) and use it's contents to populate the contents of other elements. To make it work:
+
+1. Create a Miro Card. Give it a descriptive title.
+2. Open the Card. In the description field you will use key::value pairs like this:
+
+"ti1::My awesome game card title
+ct1::The content for a card"
+
+Each line is a key::value pair, so each time you use enter, you are entering a new field.
+The key will always be anything you like plus (::), so it can be yes2::. The information before (::) will be used to find components to update, so make sure its a couple of characters and numbers. Something like id1 or cc3 works fine.
+
+3. Create sticky notes, text elements or shapes and in their content write the key you want to be updated. For example, you create a title for a game card with a rectabgle shape and place "ti1" as the content.
+4. Whenever you click the sync button, every Miro element that has a "content" property that has the key string will be changed in a way the key remains, but the value content is added like this:
+
+"(ti1)My awesome game card title"
+
+IMPORTANT: If you remove the key, for example buy deleting the "(ti1)" string, you won't be able to sync this component again.
 
 ## MIRO credits
 Each transaction spends credits and there is a limit to the amount of credits you can use in a minute. If you make expensive operations (like shuffling hundreds of cards) to often, the app might stop working for a minute. Be careful.

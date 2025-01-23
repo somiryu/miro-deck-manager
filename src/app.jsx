@@ -17,6 +17,10 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function removeHTMLTags(str) {
+  return str.replace(/<\/?[^>]+(>|$)/g, ""); // Regex to match HTML tags
+}
+
 const moveElem = (elem, x, y) => {
   if(!elem.x) return
   elem.x = elem.x + x
@@ -160,6 +164,37 @@ const stack = async () => {
   }
 }
 
+const data = async() => {
+  const selected = await miro.board.getSelection()
+  const cards = selected.filter(g => g.type === "card")
+  if(!cards.length) return
+  let dataTable = {}
+  for(let card of cards){
+    console.log(card.description)
+    const rows = card.description.split("</p><p>");
+    console.log("rows", rows)
+    for(let row of rows){
+      const _data = row.split("::")
+      console.log(row, _data)
+      dataTable[removeHTMLTags(_data[0])] = _data[1].replace("</p>", "")
+    }
+    console.log("data Table", dataTable)
+    const allItems = await miro.board.get()
+    const modifiable = allItems.filter(g => g.content)
+    console.log(modifiable)
+    for(let key in dataTable){
+      console.log("Key", key)
+      const itemsToChange = modifiable.filter(g => g.content.includes(key))
+      console.log("itemsToChange", itemsToChange)
+      for(let item of itemsToChange){
+        item.content = "<p>(" + key + ")" + dataTable[key] + "</p>"
+        console.log("new item content:", item.content)
+        item.sync()
+      }
+    }
+  }  
+}
+
 
 //Particular logic
 const shuffleElements = async (elemArr) => {
@@ -215,6 +250,9 @@ const pickFromArr = async(arr ) => {
   await miro.board.select({id: ids})
 }
 
+
+
+
 const App = () => { 
     const [rad, setRad] = React.useState([10, 300])
 
@@ -231,7 +269,7 @@ const App = () => {
 
       await processGroups(process, "groups")
     }
-  
+
     return ( <div className="grid wrapper"> 
       <div className="cs1 ce12"> 
         <small>This app was developed by Azahar Games in Colombia. It allows you to design and test board games, but you can also find other creative uses. Check the <a href="https://github.com/somiryu/miro-deck-manager" target="_blank">documentation here</a>
@@ -272,6 +310,13 @@ const App = () => {
         <label>Range min-max (px):</label>
         <input type="number" min="0" value={rad[0]} onChange={(e)=>setRad([e.target.value, rad[1]])}></input>
         <input type="number" min="0" value={rad[1]} onChange={(e)=>setRad([rad[0], e.target.value])}></input>
+      </div>
+      <div className="cs1 ce12">
+        <h3>Data</h3>
+        <small>Select a card or cards and sync to change other objects text descriptions.</small><br/>
+        <button className="button button-primary az-b"  onClick={()=>data()}>
+          Sync
+        </button>
       </div>
     </div> ); 
 }; 
