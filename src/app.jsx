@@ -24,18 +24,25 @@ const moveElem = (elem, x, y) => {
   elem.sync()
 }
 
-const getTopAndBottomElemInGroup = async (elemArr) => {
-  if(elemArr.length <= 1) return {top: null, bottom: null}
-  let bottom, top, lowest, highest
+const getTopAndBottomElemInGroup = async (elemArr, log = false) => {
+  if(elemArr.length <= 1) return {top: null, bottom: null, second: null}
+  console.log("begin")
+  let bottom, top, lowest, highest, second, secHighest
   for(let elem of elemArr){
+    if(log) console.log("elem", elem)
     const index = await elem.getLayerIndex()
+    if(log) console.log("index", index)
     if(!lowest) {lowest = index; bottom = elem}
     else if(index < lowest) {lowest = index; bottom = elem}
 
     if(!highest) {highest = index; top = elem}
     else if(index > highest)  {highest = index; top = elem}
+
+    if(!secHighest) {secHighest = index; second = elem}
+    else if(index > secHighest && index < highest)  {secHighest = index; second = elem}
   }
-  return {top, bottom}
+  if(log) console.log("top", top)
+  return {top, bottom, second}
 }
 
 const processGroups = async (fn = ()=>{}, type = "top") => {
@@ -67,10 +74,16 @@ const delay = ms => {
 
 //Actions
 const roll = async () => {
+  let selection = await miro.board.getSelection()
+  if(selection.length === 0) return
+  selection = selection.filter(g => g.type !== "group")
+
   const times = Math.floor(Math.random() * 6) + 5; // Random number between 5 and 10
   for (let i = 0; i < times; i++) {
     await delay(100); // Wait 
-    shuffle(); // Shuffle the array
+    const randomIndex = Math.floor(Math.random() * selection.length); // Generate random index
+    const picked = selection[randomIndex]
+    await picked.bringToFront() 
   } 
 }
 
@@ -87,22 +100,56 @@ async function flipAll(){
   }
 }
 
-const stack = async () => {
-  const selected = await miro.board.getSelection()
-  const elems = selected.filter(e => e.x)
+async function unFlipAll(){
+  const selectedGroup = await miro.board.getSelection()
+  const groups = selectedGroup.filter(g => g.type === "group")
+  for(let group of groups){
+    const toInvert = selectedGroup.filter(elem => group.itemsIds.includes(elem.id))
+    unflipSingleGroup(toInvert)
+  }
+}
+
+const getCenterCoordOfElements = (elems) => {
   let minX, maxX, minY, maxY
+
+  //get center of all elements
   for(let elem of elems){
     if(!minX || elem.x < minX) minX = elem.x 
     if(!maxX || elem.x > maxX) maxX = elem.x 
     if(!minY || elem.y < minY) minY = elem.y 
     if(!maxY || elem.y > maxY) maxY = elem.y
   }
-  const centerX = (minX + maxX) / 2
-  const centerY = (minY + maxY) / 2
+  return [(minX + maxX) / 2,  (minY + maxY) / 2]
+}
 
+const stack = async () => {
+  const selected = await miro.board.getSelection()
+  const elems = selected.filter(e => e.x)
+  const [centerX, centerY] = getCenterCoordOfElements(elems)
+
+  //Now, we should move elements. If in group, we should move them using relative movement
+  let moved = [] //saves Ids of moved elements
   for(let elem of elems){
-    elem.x = centerX; elem.y = centerY
-    elem.sync()
+    if(moved.includes(elem.id)) continue //avoid moving an element of already moved
+    if (elem.groupId){
+      //get relative positions of elements to center coordinates of move with offset
+      const group = await miro.board.getById(elem.groupId)
+      const groupElems = await miro.board.get({id: group.itemsIds})
+      const [gCenterX, gCenterY] = getCenterCoordOfElements(groupElems)
+      for(let elem of groupElems){
+        //get the offset, the move to center with offset
+        const xOffset = gCenterX - elem.x
+        const yOffset = gCenterY - elem.y
+        elem.x = centerX - xOffset
+        elem.y = centerY - yOffset
+        elem.sync()
+        moved.push(elem.id)
+      }
+    } else {
+      //move element to center coordinates
+      elem.x = centerX; elem.y = centerY
+      elem.sync()
+    }
   }
 }
 
@@ -114,13 +161,30 @@ const shuffleElements = async (elemArr) => {
   let lastElement = shuffledElems.at(-1)
   for(let i = 0; i < shuffledElems.length; i++){
     let current = shuffledElems[i]
-    current.bringInFrontOf(lastElement)
+    //We should send all elements in the group to the front
+    const grouped = await getElemArrayOrSingle(current)
+    await miro.board.bringInFrontOf(grouped, lastElement)
     lastElement = current
   }
 }
 
+const getElemArrayOrSingle = async (elem) => {
+  if(!elem.groupId) return elem
+  const group = await miro.board.getById(elem.groupId)
+  const groupElems = await miro.board.get({id: group.itemsIds})
+  return groupElems
+}
+
+
+
 const flipSingleGroup = async (toInvert) => {
-  const {top, bottom} = await getTopAndBottomElemInGroup(toInvert)
+  const {top, bottom, _} = await getTopAndBottomElemInGroup(toInvert)
+  if(!top || !bottom) return 
+  await top.sendBehindOf(bottom)
+}
+
+const unflipSingleGroup = async (toInvert) => {
+  const {top, bottom, _} = await getTopAndBottomElemInGroup(toInvert)
   if(!top || !bottom) return 
   await bottom.bringInFrontOf(top)
 }
@@ -128,10 +192,22 @@ const flipSingleGroup = async (toInvert) => {
 
 const pickFromArr = async(arr ) => {
   const randomIndex = Math.floor(Math.random() * arr.length); // Generate random index
-  const picked = arr[randomIndex]
-  await picked.bringToFront()
+  let picked = arr[randomIndex]
+
+  let ids = picked.id
+  if(picked.groupId){
+    const group = await miro.board.getById(picked.groupId)
+    picked = await miro.board.get({id: group.itemsIds})
+    for(let el of picked){el.x += 50; el.y += 50; el.sync()}
+    ids = picked.map(e => e.id)
+  } else {
+    picked.x += 50; picked.y += 50
+    picked.sync()
+  }
+
+  await miro.board.bringToFront(picked)
   await miro.board.deselect()
-  await miro.board.select({id: picked.id})
+  await miro.board.select({id: ids})
 }
 
 const App = () => { 
@@ -162,6 +238,9 @@ const App = () => {
         </button>
         <button className="button button-primary"  onClick={()=>flipAll()}>
           Flip
+        </button>
+        <button className="button button-primary"  onClick={()=>unFlipAll()}>
+          Unflip
         </button>
         <button className="button button-primary"  onClick={()=>stack()}>
           Stack
