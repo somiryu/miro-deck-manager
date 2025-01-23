@@ -90,6 +90,13 @@ const roll = async () => {
 const shuffle = async () => await processGroups(shuffleElements)
 const pick = async () => await processGroups(pickFromArr)
 
+const rotateClock = async() => {
+  const selectedGroup = await miro.board.getSelection()
+  const toRotate = selectedGroup.filter(g => g.type !== "group")
+  for(let elem of toRotate){
+    elem.rotation += 45; elem.sync()
+  }
+}
 
 async function flipAll(){
   const selectedGroup = await miro.board.getSelection()
@@ -175,8 +182,6 @@ const getElemArrayOrSingle = async (elem) => {
   return groupElems
 }
 
-
-
 const flipSingleGroup = async (toInvert) => {
   const {top, bottom, _} = await getTopAndBottomElemInGroup(toInvert)
   if(!top || !bottom) return 
@@ -229,30 +234,39 @@ const App = () => {
   
     return ( <div className="grid wrapper"> 
       <div className="cs1 ce12"> 
-        <p>This app was developed by Azahar Games in Colombia. It allows you to design and test board ganes, but you can also find other creative uses</p>
-        <button className="button button-primary"  onClick={()=>shuffle()}>
+        <small>This app was developed by Azahar Games in Colombia. It allows you to design and test board games, but you can also find other creative uses. Check the <a href="https://github.com/somiryu/miro-deck-manager" target="_blank">documentation here</a>
+        </small>
+        <br/><br/>
+        <h3>Cards</h3>
+        <button className="button button-primary az-b"  onClick={()=>shuffle()}>
           Shuffle
         </button>
-        <button className="button button-primary"  onClick={()=>roll()}>
-          Roll
-        </button>
-        <button className="button button-primary"  onClick={()=>flipAll()}>
+        
+        <button className="button button-primary az-b"  onClick={()=>flipAll()}>
           Flip
         </button>
-        <button className="button button-primary"  onClick={()=>unFlipAll()}>
+        <button className="button button-primary az-b"  onClick={()=>unFlipAll()}>
           Unflip
         </button>
-        <button className="button button-primary"  onClick={()=>stack()}>
-          Stack
-        </button>
-        <button className="button button-primary"  onClick={()=>pick()}>
+        
+        <button className="button button-primary az-b"  onClick={()=>pick()}>
           Random Pick
         </button>
+        <h3>Dice</h3>
+        <button className="button button-primary az-b"  onClick={()=>roll()}>
+          Roll
+        </button>
 
+        <h3>Position</h3>
+        <button className="button button-primary az-b"  onClick={()=>stack()}>
+          Stack
+        </button>
+        {/* <button className="button button-primary az-b"  onClick={()=>rotateClock()}>
+          Rotate {">"}
+        </button> */}
       </div> 
-      <hr></hr>
       <div className="cs1 ce12"> 
-        <button className="button button-primary"  onClick={()=>spread()}>
+        <button className="button button-primary az-b"  onClick={()=>spread()}>
           Spread
         </button>
         <label>Range min-max (px):</label>
