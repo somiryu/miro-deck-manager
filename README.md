@@ -41,6 +41,7 @@ To avoid this, do not group deck of grouped cards or elements. Each card must be
 - Random Pick: Select multiple elements or cards and then pick one at random and send it to front. The selection will be auto-selected.
 - Spread: select a min and max range and click the button to spread all elements or cards randomly in the space. This function is incompatible with Layers.
 - Roll: Create a dice (see above) and click this button to emulate the rolling of a dice: one element will get to be on top at random.
+- +/-#: If you select a shape or text element with a numeric content, this buttons will increase or decrease their value by #.
 - Sync: See Data Management below
 
 

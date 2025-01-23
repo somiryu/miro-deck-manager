@@ -164,6 +164,19 @@ const stack = async () => {
   }
 }
 
+const counter = async(qty) => {
+  const selected = await miro.board.getSelection()
+  const counters = selected.filter(g => g.content )
+  for(let counter of counters){
+    const raw = removeHTMLTags(counter.content)
+    const num = Number(raw)
+    if(Number.isInteger(num)){
+      counter.content = "<p>"+ (num + qty) + "</p>"
+      counter.sync()
+    }
+  }
+}
+
 const data = async() => {
   const selected = await miro.board.getSelection()
   const cards = selected.filter(g => g.type === "card")
@@ -290,9 +303,21 @@ const App = () => {
         <button className="button button-primary az-b"  onClick={()=>pick()}>
           Random Pick
         </button>
-        <h3>Dice</h3>
+        <h3>Dice and Counters</h3>
         <button className="button button-primary az-b"  onClick={()=>roll()}>
           Roll
+        </button>
+        <button className="button button-primary az-b"  onClick={()=>counter(-5)}>
+          -5
+        </button>
+        <button className="button button-primary az-b"  onClick={()=>counter(-1)}>
+          -1
+        </button>
+        <button className="button button-primary az-b"  onClick={()=>counter(1)}>
+          +1
+        </button>
+        <button className="button button-primary az-b"  onClick={()=>counter(5)}>
+          +5
         </button>
 
         <h3>Position</h3>
